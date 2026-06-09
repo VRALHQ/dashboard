@@ -276,7 +276,7 @@ a { color: var(--accent); text-decoration: none; }
       <div class="kpi-sub">
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiSalesWTD">—</div><div class="kpi-sub-lbl">WTD</div></div>
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiSalesMTD">—</div><div class="kpi-sub-lbl">MTD</div></div>
-        <div class="kpi-sub-item"><div class="kpi-sub-val">1,628</div><div class="kpi-sub-lbl">LTD</div></div>
+        <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiSalesLTDsub">1,628</div><div class="kpi-sub-lbl">LTD</div></div>
       </div>
       <div class="kpi-platform"><span class="badge badge-lemon">Lemon Squeezy</span></div>
     </div>
@@ -286,7 +286,7 @@ a { color: var(--accent); text-decoration: none; }
       <div class="kpi-sub">
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiRevWTD">—</div><div class="kpi-sub-lbl">WTD</div></div>
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiRevMTD">—</div><div class="kpi-sub-lbl">MTD</div></div>
-        <div class="kpi-sub-item"><div class="kpi-sub-val">$21,147</div><div class="kpi-sub-lbl">LTD</div></div>
+        <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiRevLTDsub">$21,147</div><div class="kpi-sub-lbl">LTD</div></div>
       </div>
       <div class="kpi-platform"><span class="badge badge-lemon">before taxes</span></div>
     </div>
@@ -679,10 +679,12 @@ function updateKPIs(data) {
   document.getElementById('kpiSalesLTD').textContent = fmt(lemonLTD);
   document.getElementById('kpiSalesWTD').textContent = fmt(lw.wtd);
   document.getElementById('kpiSalesMTD').textContent = fmt(lw.mtd);
-  
+  document.getElementById('kpiSalesLTDsub').textContent = fmt(lemonLTD);
+
   document.getElementById('kpiRevLTD').textContent = '$' + fmt(revLTD/100);
   document.getElementById('kpiRevWTD').textContent = '$' + fmt(lr.wtd/100);
   document.getElementById('kpiRevMTD').textContent = '$' + fmt(lr.mtd/100);
+  document.getElementById('kpiRevLTDsub').textContent = '$' + fmt(revLTD/100);
   
   if (data.discord && data.discord.length) {
     const discLTD = data.discord[data.discord.length-1].cum;
@@ -972,10 +974,13 @@ async function loadFromSheets() {
     if (sales.status === 'fulfilled' && sales.value.length) {
       let cumO=0, cumR=0;
       const parsed = sales.value.map(r => {
-        const o = parseInt(r.orders||0);
-        const rev = Math.round(parseFloat(r.revenue_usd||0)*100);
+        const o = parseInt(r.orders||r.Orders||0);
+        // Strip currency symbols and commas before parsing (handles "$1,299.00" etc.)
+        const rawRev = String(r.revenue_usd||r.Revenue_USD||r.Revenue_usd||r.revenue||0).replace(/[$,\s]/g,'');
+        const rev = Math.round(parseFloat(rawRev||0)*100);
         cumO+=o; cumR+=rev;
-        return { date:(r.date||'').trim(), orders:o, rev, cum_orders:cumO, cum_rev:cumR };
+        const d = normDate(r.date||r.Date||'');
+        return { date: d, orders:o, rev, cum_orders:cumO, cum_rev:cumR };
       }).filter(r=>r.date);
       if (parsed.length) { activeData.lemon = parsed; ok = true; }
     }
