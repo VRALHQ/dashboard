@@ -823,48 +823,47 @@ async function loadFromSheets() {
     let ok = false;
 
     if (steam.status === 'fulfilled' && steam.value.length) {
-      // Parse steam: find header row containing DateLocal
       const rows = steam.value;
       let cum = 0;
-      activeData.steam = rows.filter(r => r.DateLocal || r.datelocal).map(r => {
+      const parsed = rows.filter(r => r.DateLocal || r.datelocal).map(r => {
         const adds = parseInt(r.Adds || r.adds || 0);
         const dels = parseInt(r.Deletes || r.deletes || 0);
         cum += adds - dels;
         return { date: (r.DateLocal||r.datelocal).trim(), adds, deletes: dels, net_cum: cum };
       });
-      ok = true;
+      if (parsed.length) { activeData.steam = parsed; ok = true; }
     }
 
     if (meta.status === 'fulfilled' && meta.value.length) {
-      const col = k => ['Date','date','DATE'].find(c => meta.value[0][c] !== undefined) || 'Date';
-      activeData.meta = meta.value.map(r => ({
+      const parsed = meta.value.map(r => ({
         date: (r.Date||r.date||'').trim(),
         active: parseInt(r['Active wishlists']||r.active_wishlists||r.Active_wishlists||0),
         adds: parseInt(r.Additions||r.additions||0),
         purchases: parseInt(r.Purchases||r.purchases||0),
         deletes: parseInt(r.Deletions||r.deletions||0)
       })).filter(r => r.date);
-      ok = true;
+      if (parsed.length) { activeData.meta = parsed; ok = true; }
     }
 
     if (sales.status === 'fulfilled' && sales.value.length) {
       let cumO=0, cumR=0;
-      activeData.lemon = sales.value.map(r => {
+      const parsed = sales.value.map(r => {
         const o = parseInt(r.orders||0);
         const rev = Math.round(parseFloat(r.revenue_usd||0)*100);
         cumO+=o; cumR+=rev;
         return { date:(r.date||'').trim(), orders:o, rev, cum_orders:cumO, cum_rev:cumR };
       }).filter(r=>r.date);
-      ok = true;
+      if (parsed.length) { activeData.lemon = parsed; ok = true; }
     }
 
     if (discord.status === 'fulfilled' && discord.value.length) {
       let cum=0;
-      activeData.discord = discord.value.map(r => {
+      const parsed = discord.value.map(r => {
         const j = parseInt(r.total_joins||r.joins||0);
         cum+=j;
         return { date:(r.date||'').trim(), joins:j, cum };
       }).filter(r=>r.date);
+      if (parsed.length) activeData.discord = parsed;
     }
 
     if (events.status === 'fulfilled' && events.value.length) {
