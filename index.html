@@ -422,6 +422,19 @@ let ranges = { wishlist: 90, steam: 90, meta: 90, sales: 60 };
 // ============================================================
 // UTILS
 // ============================================================
+function normDate(s) {
+  // Normalize any date string to yyyy-mm-dd
+  if (!s) return '';
+  s = String(s).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; // already ISO
+  // DD/MM/YYYY or D/M/YYYY (European / Italian locale from Google Sheets)
+  const eu = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (eu) return `${eu[3]}-${eu[2].padStart(2,'0')}-${eu[1].padStart(2,'0')}`;
+  // MM/DD/YYYY (US) — fallback via Date parse
+  const d = new Date(s);
+  if (!isNaN(d)) return d.toISOString().slice(0, 10);
+  return s;
+}
 function fmt(n, prefix='') {
   if (n >= 1000000) return prefix + (n/1000000).toFixed(1) + 'M';
   if (n >= 1000) return prefix + Math.round(n).toLocaleString();
@@ -829,14 +842,14 @@ async function loadFromSheets() {
         const adds = parseInt(r.Adds || r.adds || 0);
         const dels = parseInt(r.Deletes || r.deletes || 0);
         cum += adds - dels;
-        return { date: (r.DateLocal||r.datelocal).trim(), adds, deletes: dels, net_cum: cum };
-      });
+        return { date: normDate(r.DateLocal||r.datelocal), adds, deletes: dels, net_cum: cum };
+      }).filter(r => r.date);
       if (parsed.length) { activeData.steam = parsed; ok = true; }
     }
 
     if (meta.status === 'fulfilled' && meta.value.length) {
       const parsed = meta.value.map(r => ({
-        date: (r.Date||r.date||'').trim(),
+        date: normDate(r.Date||r.date||''),
         active: parseInt(r['Active wishlists']||r.active_wishlists||r.Active_wishlists||0),
         adds: parseInt(r.Additions||r.additions||0),
         purchases: parseInt(r.Purchases||r.purchases||0),
@@ -919,12 +932,12 @@ async function loadFromSheets() {
 // ============================================================
 function renderAll() {
   updateKPIs(activeData);
-  buildTimeline();
   buildWishlistChart(ranges.wishlist);
   buildSteamChart(ranges.steam);
   buildMetaChart(ranges.meta);
   buildSalesChart(ranges.sales);
   buildEventsTable(activeData.events);
+  try { buildTimeline(); } catch(e) { console.warn('Timeline error:', e); }
 }
 
 // ============================================================
