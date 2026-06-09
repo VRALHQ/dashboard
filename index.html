@@ -921,7 +921,7 @@ function setRange(chart, days) {
 // GOOGLE SHEETS LOADER
 // ============================================================
 function sheetsUrl(sheetId, tabName) {
-  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}&_t=${Date.now()}`;
 }
 
 async function fetchCSV(url) {
@@ -972,6 +972,7 @@ async function loadFromSheets() {
     }
 
     if (sales.status === 'fulfilled' && sales.value.length) {
+      console.log('[Sales] raw rows:', sales.value.length, '| first row keys:', Object.keys(sales.value[0]||{}), '| first row:', sales.value[0]);
       let cumO=0, cumR=0;
       const parsed = sales.value.map(r => {
         const o = parseInt(r.orders||r.Orders||0);
@@ -982,7 +983,10 @@ async function loadFromSheets() {
         const d = normDate(r.date||r.Date||'');
         return { date: d, orders:o, rev, cum_orders:cumO, cum_rev:cumR };
       }).filter(r=>r.date);
+      console.log('[Sales] parsed rows:', parsed.length, '| last row:', parsed[parsed.length-1]);
       if (parsed.length) { activeData.lemon = parsed; ok = true; }
+    } else {
+      console.warn('[Sales] fetch status:', sales.status, '| reason:', sales.reason || (sales.value && sales.value.length === 0 ? 'empty' : 'unknown'));
     }
 
     if (discord.status === 'fulfilled' && discord.value.length) {
