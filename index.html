@@ -423,17 +423,15 @@ let ranges = { wishlist: 90, steam: 90, meta: 90, sales: 60 };
 // UTILS
 // ============================================================
 function normDate(s) {
-  // Normalize any date string to yyyy-mm-dd
+  // Normalize any date string to yyyy-mm-dd.
+  // Google Sheets gviz CSV always returns date cells in US M/D/YYYY format
+  // (e.g. "4/1/2026" = April 1) regardless of spreadsheet locale.
   if (!s) return '';
   s = String(s).trim();
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; // already ISO
-  // DD/MM/YYYY or D/M/YYYY (European / Italian locale from Google Sheets)
-  const eu = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if (eu) return `${eu[3]}-${eu[2].padStart(2,'0')}-${eu[1].padStart(2,'0')}`;
-  // MM/DD/YYYY (US) — fallback via Date parse
-  const d = new Date(s);
+  const d = new Date(s); // handles M/D/YYYY, M/D/YYYY H:MM:SS, etc.
   if (!isNaN(d)) return d.toISOString().slice(0, 10);
-  return s;
+  return '';
 }
 function fmt(n, prefix='') {
   if (n >= 1000000) return prefix + (n/1000000).toFixed(1) + 'M';
