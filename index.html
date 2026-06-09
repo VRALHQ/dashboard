@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -928,7 +929,11 @@ async function fetchCSV(url) {
   const r = await fetch(url, { cache: 'no-store' });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   const text = await r.text();
-  return Papa.parse(text, { header: true, skipEmptyLines: true }).data;
+  return Papa.parse(text, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: h => h.trim()   // strip leading/trailing spaces from all column names
+  }).data;
 }
 
 async function loadFromSheets() {
@@ -972,7 +977,9 @@ async function loadFromSheets() {
     }
 
     if (sales.status === 'fulfilled' && sales.value.length) {
-      console.log('[Sales] raw rows:', sales.value.length, '| first row keys:', Object.keys(sales.value[0]||{}), '| first row:', sales.value[0]);
+      // Find the date key — column header may contain annotation text after "date"
+      const firstRow = sales.value[0] || {};
+      const dateKey = Object.keys(firstRow).find(k => k.toLowerCase().startsWith('date')) || 'date';
       let cumO=0, cumR=0;
       const parsed = sales.value.map(r => {
         const o = parseInt(r.orders||r.Orders||0);
@@ -980,13 +987,10 @@ async function loadFromSheets() {
         const rawRev = String(r.revenue_usd||r.Revenue_USD||r.Revenue_usd||r.revenue||0).replace(/[$,\s]/g,'');
         const rev = Math.round(parseFloat(rawRev||0)*100);
         cumO+=o; cumR+=rev;
-        const d = normDate(r.date||r.Date||'');
+        const d = normDate(r[dateKey]||r.date||r.Date||'');
         return { date: d, orders:o, rev, cum_orders:cumO, cum_rev:cumR };
       }).filter(r=>r.date);
-      console.log('[Sales] parsed rows:', parsed.length, '| last row:', parsed[parsed.length-1]);
       if (parsed.length) { activeData.lemon = parsed; ok = true; }
-    } else {
-      console.warn('[Sales] fetch status:', sales.status, '| reason:', sales.reason || (sales.value && sales.value.length === 0 ? 'empty' : 'unknown'));
     }
 
     if (discord.status === 'fulfilled' && discord.value.length) {
