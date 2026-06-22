@@ -324,7 +324,7 @@ a { color: var(--accent); text-decoration: none; }
       <div class="kpi-sub">
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiDiscordWTD">—</div><div class="kpi-sub-lbl">WTD Joins</div></div>
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiDiscordMTD">—</div><div class="kpi-sub-lbl">MTD Joins</div></div>
-        <div class="kpi-sub-item"><div class="kpi-sub-val">1,531</div><div class="kpi-sub-lbl">Total</div></div>
+        <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiDiscordLTDsub">1,531</div><div class="kpi-sub-lbl">Total</div></div>
       </div>
     </div>
   </div>
@@ -720,6 +720,7 @@ function updateKPIs(data) {
     document.getElementById('kpiDiscordLTD').textContent = fmt(discLTD);
     document.getElementById('kpiDiscordWTD').textContent = fmt(dw.wtd);
     document.getElementById('kpiDiscordMTD').textContent = fmt(dw.mtd);
+    document.getElementById('kpiDiscordLTDsub').textContent = fmt(discLTD);
   }
 }
 
@@ -1021,11 +1022,14 @@ async function loadFromSheets() {
     }
 
     if (discord.status === 'fulfilled' && discord.value.length) {
+      // Find the date key dynamically in case the header has extra text/spaces
+      const dFirstRow = discord.value[0] || {};
+      const dDateKey = Object.keys(dFirstRow).find(k => k.toLowerCase().startsWith('date')) || 'date';
       let cum=0;
       const parsed = discord.value.map(r => {
         const j = parseInt(r.total_joins||r.joins||0);
         cum+=j;
-        return { date:(r.date||'').trim(), joins:j, cum };
+        return { date: normDate(r[dDateKey]||r.date||''), joins:j, cum };
       }).filter(r=>r.date);
       if (parsed.length) activeData.discord = parsed;
     }
