@@ -555,7 +555,7 @@ function checkPin() {
 // ============================================================
 // STATE
 // ============================================================
-let SHEET_ID = localStorage.getItem('vral_sheet_id') || '';
+let SHEET_ID = '1Oa4w90z62ICFc6b3UPrFaxw_gXJLjtTj6N2-8lv-xwg';
 let activeData = { steam: DEMO_STEAM, meta: DEMO_META, lemon: DEMO_LEMON, discord: DEMO_DISC, events: DEFAULT_EVENTS, milestones: null };
 let charts = {};
 let ranges = { wishlist: 90, steam: 90, meta: 90, sales: 60 };
@@ -1036,8 +1036,8 @@ async function loadFromSheets() {
 
     if (events.status === 'fulfilled' && events.value.length) {
       activeData.events = events.value.map(r => ({
-        date_start: (r.date_start||'').trim(),
-        date_end: (r.date_end||'').trim(),
+        date_start: normDate((r.date_start||'').trim()),
+        date_end: normDate((r.date_end||'').trim()),
         title: r.title||'',
         description: r.description||'',
         color: r.color||'#00c8ff'
