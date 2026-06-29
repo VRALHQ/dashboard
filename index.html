@@ -489,7 +489,7 @@ const DEFAULT_EVENTS = [
   { date_start:'2026-03-19', date_end:'2026-03-19', title:'Founder Edition Launch', description:'Lemon Squeezy store goes live', color:'#00e87a' },
   { date_start:'2026-06-15', date_end:'2026-06-22', title:'Steam Fest Demo', description:'Public demo on Steam — major wishlist driver expected', color:'#ff8c42' },
   { date_start:'2026-07-06', date_end:'2026-07-13', title:'Content Creator Multiplayer', description:'Creator builds go live — multiplayer version', color:'#00c8ff' },
-  { date_start:'2026-07-13', date_end:'2026-07-13', title:'Flat 2D Steam Build', description:'Flat 2D version released on Steam', color:'#7b5cff' },
+  { date_start:'2026-07-31', date_end:'2026-07-31', title:'Flat 2D Steam Build', description:'Flat 2D version released on Steam', color:'#7b5cff' },
   { date_start:'2026-08-03', date_end:'2026-08-10', title:'Open Beta', description:'Open beta period on all platforms', color:'#ffd600' },
   { date_start:'2026-09-17', date_end:'2026-09-17', title:'Early Access Launch', description:'Early Access goes live on Steam & Meta', color:'#00e87a' },
   { date_start:'2026-12-10', date_end:'2026-12-10', title:'1.0 Full Launch', description:'Full game release', color:'#00e87a' },
@@ -616,16 +616,25 @@ const FALLBACK_MILESTONES = [
   { label: 'Founder Ed.', start: '2026-03-19', type: 'past' },
   { label: 'Steam Fest Demo', start: '2026-06-15', type: 'near' },
   { label: 'Creator MP', start: '2026-07-06', type: 'upcoming' },
-  { label: 'Flat 2D Build', start: '2026-07-13', type: 'upcoming' },
+  { label: 'Flat 2D Build', start: '2026-07-31', type: 'upcoming' },
   { label: 'Open Beta', start: '2026-08-03', type: 'upcoming' },
   { label: 'Early Access', start: '2026-09-17', type: 'release' },
   { label: '1.0 Launch', start: '2026-12-10', type: 'release' },
 ];
 
 function buildTimeline() {
-  const milestones = (activeData.milestones && activeData.milestones.length)
-    ? activeData.milestones
-    : FALLBACK_MILESTONES;
+  const source = (activeData.events && activeData.events.length)
+    ? activeData.events
+    : DEFAULT_EVENTS;
+  const milestones = source.map(ev => {
+    const days = daysUntil(ev.date_start);
+    let type;
+    if (days < 0) type = 'past';
+    else if (days <= 14) type = 'near';
+    else if (/access|launch/i.test(ev.title)) type = 'release';
+    else type = 'upcoming';
+    return { label: ev.title, start: ev.date_start, type };
+  });
 
   const rangeStart = new Date('2026-03-01');
   const rangeEnd   = new Date('2026-12-31');
