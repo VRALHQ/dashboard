@@ -950,7 +950,7 @@ function setRange(chart, days) {
 // GOOGLE SHEETS LOADER
 // ============================================================
 function sheetsUrl(sheetId, tabName) {
-  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}&_t=${Date.now()}`;
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&headers=1&sheet=${encodeURIComponent(tabName)}&_t=${Date.now()}`;
 }
 
 async function fetchCSV(url) {
