@@ -280,7 +280,7 @@ a { color: var(--accent); text-decoration: none; }
       <button class="range-btn" onclick="setTlRange(30)">30D</button>
       <button class="range-btn" onclick="setTlRange(90)">90D</button>
       <button class="range-btn" onclick="setTlRange(180)">180D</button>
-      <button class="range-btn active" id="tlBtnAll" onclick="setTlRange(0)">All</button>
+      <button class="range-btn active" onclick="setTlRange(0)">All</button>
     </div>
     <div class="timeline-track" id="timelineTrack">
       <div class="timeline-line"></div>
@@ -647,7 +647,6 @@ function buildTimeline() {
 
   const today = new Date(); today.setHours(0,0,0,0);
 
-  // Filter by range if set
   const filtered = tlRangeDays === 0 ? source : source.filter(ev => {
     const d = daysUntil(ev.date_start);
     return d >= -30 && d <= tlRangeDays;
@@ -663,7 +662,6 @@ function buildTimeline() {
     return { label: ev.title, start: ev.date_start, type };
   });
 
-  // Dynamic axis: fit to visible milestones with padding
   let rangeStart, rangeEnd;
   if (tlRangeDays === 0) {
     rangeStart = new Date('2026-03-01');
@@ -673,7 +671,6 @@ function buildTimeline() {
     rangeEnd   = new Date(today); rangeEnd.setDate(today.getDate() + tlRangeDays);
   }
   const totalMs = rangeEnd - rangeStart;
-  const today = new Date(); today.setHours(0,0,0,0);
   const progressPct = Math.min(100, Math.max(0, (today - rangeStart) / totalMs * 100));
 
   const track = document.getElementById('timelineTrack');
@@ -1175,40 +1172,6 @@ function updateAlert() {
     const dEl = document.getElementById('alertDays');
     dEl.textContent = days === 0 ? 'TODAY' : `in ${days} day${days===1?'':'s'}`;
     const rangeLabel = next.date_end && next.date_end !== next.date_start
-      ? `${fmtDate(next.date_start)}–${fmtDate(next.date_end)}, 2026`
-      : `${fmtDate(next.date_start)}, 2026`;
-    document.querySelector('.alert-bar span:last-child').textContent = rangeLabel;
-  }
-}
-
-// ============================================================
-// INIT
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('footerDate').textContent = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-
-  const now = new Date();
-  const dayOfWeek = now.getDay();
-  const monday = new Date(now); monday.setDate(now.getDate() - (dayOfWeek===0?6:dayOfWeek-1));
-  document.getElementById('noteWeekLabel').textContent = 'Week of ' + monday.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-  if (SHEET_ID) document.getElementById('sheetLink').href = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
-
-  buildTimeline();
-  renderAll();
-  updateAlert();
-
-  if (SHEET_ID) loadFromSheets();
-});
-</script>
-</body>
-</html>
-load from sheets if saved
-  if (SHEET_ID) loadFromSheets();
-});
-</script>
-</body>
-</html>e_start
       ? `${fmtDate(next.date_start)}–${fmtDate(next.date_end)}, 2026`
       : `${fmtDate(next.date_start)}, 2026`;
     document.querySelector('.alert-bar span:last-child').textContent = rangeLabel;
