@@ -565,11 +565,15 @@ let ranges = { wishlist: 90, steam: 90, meta: 90, sales: 60 };
 // ============================================================
 function normDate(s) {
   // Normalize any date string to yyyy-mm-dd.
-  // Google Sheets gviz CSV always returns date cells in US M/D/YYYY format
-  // (e.g. "4/1/2026" = April 1) regardless of spreadsheet locale.
+  // Handles: ISO (2026-07-20), US M/D/YYYY, gviz Date(year,month0,day)
   if (!s) return '';
   s = String(s).trim();
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; // already ISO
+  const gviz = s.match(/^Date\((\d+),(\d+),(\d+)\)$/);
+  if (gviz) {
+    const [, y, m, d] = gviz.map(Number);
+    return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  }
   const d = new Date(s); // handles M/D/YYYY, M/D/YYYY H:MM:SS, etc.
   if (!isNaN(d)) return d.toISOString().slice(0, 10);
   return '';
