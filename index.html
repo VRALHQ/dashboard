@@ -1185,6 +1185,40 @@ function updateAlert() {
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('footerDate').textContent = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const monday = new Date(now); monday.setDate(now.getDate() - (dayOfWeek===0?6:dayOfWeek-1));
+  document.getElementById('noteWeekLabel').textContent = 'Week of ' + monday.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  if (SHEET_ID) document.getElementById('sheetLink').href = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`;
+
+  buildTimeline();
+  renderAll();
+  updateAlert();
+
+  if (SHEET_ID) loadFromSheets();
+});
+</script>
+</body>
+</html>
+load from sheets if saved
+  if (SHEET_ID) loadFromSheets();
+});
+</script>
+</body>
+</html>e_start
+      ? `${fmtDate(next.date_start)}–${fmtDate(next.date_end)}, 2026`
+      : `${fmtDate(next.date_start)}, 2026`;
+    document.querySelector('.alert-bar span:last-child').textContent = rangeLabel;
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
   // Footer date
   document.getElementById('footerDate').textContent = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   
