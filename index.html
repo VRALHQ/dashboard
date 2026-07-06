@@ -1106,6 +1106,7 @@ function renderAll() {
   buildSalesChart(ranges.sales);
   buildEventsTable(activeData.events);
   try { buildTimeline(); } catch(e) { console.warn('Timeline error:', e); }
+  updateAlert();
 }
 
 // ============================================================
