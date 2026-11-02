@@ -53,6 +53,20 @@ a { color: var(--accent); text-decoration: none; }
   .header-btn { order: 2; font-size: 11px; padding: 5px 9px; }
 }
 
+/* SALES BY PLATFORM TABLE */
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.platform-table { min-width: 620px; }
+.platform-table th.num, .platform-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.platform-table td { white-space: nowrap; vertical-align: middle; }
+.platform-table td.num { color: var(--text); }
+.platform-table .pt-name { font-weight: 600; color: var(--text); }
+.platform-table tr.pt-sub td { color: var(--text2); background: rgba(255,255,255,.02); }
+.platform-table tr.pt-sub .pt-name { color: var(--text2); }
+.platform-table tr.pt-total td { font-weight: 700; color: var(--text); border-top: 1px solid var(--border); }
+.platform-table .pt-status { color: var(--text3); font-size: 11px; }
+.platform-table .pt-status.err { color: var(--red); white-space: normal; min-width: 220px; }
+.table-note { font-size: 11px; line-height: 1.5; color: var(--text3); margin-top: 12px; }
+
 /* MOBILE ALERT BAR */
 @media (max-width: 640px) {
   .alert-bar {
@@ -112,7 +126,7 @@ a { color: var(--accent); text-decoration: none; }
 .kpi-sub-item { display: flex; flex-direction: column; gap: 2px; }
 .kpi-sub-val { font-size: 14px; font-weight: 700; color: var(--text); }
 .kpi-sub-lbl { font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); }
-.kpi-platform { display: flex; gap: 6px; margin-top: 8px; }
+.kpi-platform { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .badge { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: 0.5px; }
 .badge-steam { background: rgba(0,200,255,.15); color: var(--accent); }
 .badge-meta { background: rgba(123,92,255,.15); color: var(--accent2); }
@@ -297,32 +311,40 @@ a { color: var(--accent); text-decoration: none; }
       <div class="kpi-sub">
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiWishlistWTD">—</div><div class="kpi-sub-lbl">WTD</div></div>
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiWishlistMTD">—</div><div class="kpi-sub-lbl">MTD</div></div>
-        <div class="kpi-sub-item"><div class="kpi-sub-val">31,676</div><div class="kpi-sub-lbl">LTD</div></div>
+        <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiWishlistLTDsub">31,676</div><div class="kpi-sub-lbl">LTD</div></div>
       </div>
       <div class="kpi-platform">
-        <span class="badge badge-steam">Steam 12,377</span>
-        <span class="badge badge-meta">Meta 19,299</span>
+        <span class="badge badge-steam" id="kpiWishlistSteam">Steam 12,377</span>
+        <span class="badge badge-meta" id="kpiWishlistMeta">Meta 19,299</span>
       </div>
     </div>
     <div class="kpi-card sales">
-      <div class="kpi-label">Founder Edition Sales</div>
+      <div class="kpi-label" id="kpiSalesLabel">Total Sales</div>
       <div class="kpi-main" id="kpiSalesLTD">1,628</div>
       <div class="kpi-sub">
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiSalesWTD">—</div><div class="kpi-sub-lbl">WTD</div></div>
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiSalesMTD">—</div><div class="kpi-sub-lbl">MTD</div></div>
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiSalesLTDsub">1,628</div><div class="kpi-sub-lbl">LTD</div></div>
       </div>
-      <div class="kpi-platform"><span class="badge badge-lemon">Lemon Squeezy</span></div>
+      <div class="kpi-platform">
+        <span class="badge badge-lemon" id="kpiSalesFounder">Founder 1,628</span>
+        <span class="badge badge-steam" id="kpiSalesSteam">Steam —</span>
+        <span class="badge badge-meta" id="kpiSalesMeta">Meta —</span>
+      </div>
     </div>
     <div class="kpi-card revenue">
-      <div class="kpi-label">Revenue (Founder Ed.)</div>
+      <div class="kpi-label">Total Revenue</div>
       <div class="kpi-main" id="kpiRevLTD">$21,147</div>
       <div class="kpi-sub">
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiRevWTD">—</div><div class="kpi-sub-lbl">WTD</div></div>
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiRevMTD">—</div><div class="kpi-sub-lbl">MTD</div></div>
         <div class="kpi-sub-item"><div class="kpi-sub-val" id="kpiRevLTDsub">$21,147</div><div class="kpi-sub-lbl">LTD</div></div>
       </div>
-      <div class="kpi-platform"><span class="badge badge-lemon">before taxes</span></div>
+      <div class="kpi-platform">
+        <span class="badge badge-lemon" id="kpiRevFounder">Founder $21,147</span>
+        <span class="badge badge-steam" id="kpiRevSteam">Steam —</span>
+        <span class="badge badge-meta" id="kpiRevMeta">Meta —</span>
+      </div>
     </div>
     <div class="kpi-card discord">
       <div class="kpi-label">Discord Community</div>
@@ -399,15 +421,16 @@ a { color: var(--accent); text-decoration: none; }
   <br>
 
   <!-- SALES CHART -->
-  <div class="section-label">Founder Edition Sales</div>
+  <div class="section-label">Sales</div>
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-header">
         <div>
-          <div class="chart-title">Daily Orders & Cumulative Revenue</div>
-          <div class="chart-subtitle">Lemon Squeezy — subtotal in USD before taxes</div>
+          <div class="chart-title">Daily Revenue by Platform</div>
+          <div class="chart-subtitle">Founder Edition + Steam + Meta Quest, in USD — definitions under the table below</div>
         </div>
         <div class="chart-controls">
+          <button class="range-btn" onclick="setRange('sales','ea')">Early Access</button>
           <button class="range-btn" onclick="setRange('sales',30)">30D</button>
           <button class="range-btn active" onclick="setRange('sales',60)">60D</button>
           <button class="range-btn" onclick="setRange('sales',0)">All</button>
@@ -415,6 +438,31 @@ a { color: var(--accent); text-decoration: none; }
       </div>
       <div class="chart-wrap"><canvas id="chartSales" height="90"></canvas></div>
     </div>
+  </div>
+
+  <!-- SALES BY PLATFORM -->
+  <div class="events-card" style="margin-top:12px;">
+    <div class="chart-header">
+      <div class="chart-title">Sales by Platform</div>
+      <div style="font-size:11px;color:var(--text3);">Paste the CSV exports in Google Sheet → Steam_Sales, Meta_Sales and Meta_Copies tabs</div>
+    </div>
+    <div class="table-scroll">
+      <table class="events-table platform-table">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th class="num">Units</th>
+            <th class="num">Refunds</th>
+            <th class="num">Revenue</th>
+            <th class="num">Rev. WTD</th>
+            <th class="num">Rev. MTD</th>
+            <th>Data through</th>
+          </tr>
+        </thead>
+        <tbody id="platformBody"></tbody>
+      </table>
+    </div>
+    <div class="table-note" id="platformNote"></div>
   </div>
 
   <!-- EVENTS TABLE -->
@@ -454,7 +502,10 @@ a { color: var(--accent); text-decoration: none; }
         <div class="sheet-structure">
           <span class="tab-name">Steam</span> &nbsp;&nbsp;→ paste Steam CSV (skip first 2 rows)<br>
           <span class="tab-name">Meta</span> &nbsp;&nbsp;&nbsp;→ paste Meta Quest CSV<br>
-          <span class="tab-name">Sales</span> &nbsp;&nbsp;→ date | orders | revenue_usd<br>
+          <span class="tab-name">Sales</span> &nbsp;&nbsp;→ Founder Edition history: date | orders | revenue_usd<br>
+          <span class="tab-name">Steam_Sales</span> → paste the whole Steam sales CSV (top rows included)<br>
+          <span class="tab-name">Meta_Sales</span> → paste the whole Meta Quest revenue and refunds CSV<br>
+          <span class="tab-name">Meta_Copies</span> → paste the Meta Quest CSV with copies sold<br>
           <span class="tab-name">Discord</span> → date | total_joins<br>
           <span class="tab-name">Events</span> &nbsp;→ date_start | date_end | title | description<br>
           <span class="tab-name">Notes</span> &nbsp;&nbsp;→ week_date | note<br>
@@ -562,7 +613,8 @@ function checkPin() {
 // STATE
 // ============================================================
 let SHEET_ID = '1Oa4w90z62ICFc6b3UPrFaxw_gXJLjtTj6N2-8lv-xwg';
-let activeData = { steam: DEMO_STEAM, meta: DEMO_META, lemon: DEMO_LEMON, discord: DEMO_DISC, events: DEFAULT_EVENTS, milestones: null };
+let activeData = { steam: DEMO_STEAM, meta: DEMO_META, lemon: DEMO_LEMON, discord: DEMO_DISC, events: DEFAULT_EVENTS, milestones: null,
+  steamSales: { status: 'empty', rows: [] }, metaSales: { status: 'empty', rows: [] } };
 let charts = {};
 let ranges = { wishlist: 90, steam: 90, meta: 90, sales: 60 };
 
@@ -574,15 +626,21 @@ function normDate(s) {
   // Handles: ISO (2026-07-20), US M/D/YYYY, gviz Date(year,month0,day)
   if (!s) return '';
   s = String(s).trim();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s; // already ISO
+  const iso = s.match(/^\d{4}-\d{2}-\d{2}/);
+  if (iso) return iso[0]; // ISO date, with or without a time part
+  const mdy = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  // Read M/D/YYYY directly so the day doesn't shift for viewers east of UTC (e.g. Italy)
+  if (mdy) return `${mdy[3]}-${mdy[1].padStart(2,'0')}-${mdy[2].padStart(2,'0')}`;
   const gviz = s.match(/^Date\((\d+),(\d+),(\d+)\)$/);
   if (gviz) {
     const [, y, m, d] = gviz.map(Number);
     return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   }
-  const d = new Date(s); // handles M/D/YYYY, M/D/YYYY H:MM:SS, etc.
-  if (!isNaN(d)) return d.toISOString().slice(0, 10);
-  return '';
+  // Written-out dates such as "Oct 29, 2026". A year is required so text like "Total 1" is not read as a date.
+  if (!/\b\d{4}\b/.test(s) || !/[a-z]{3}/i.test(s)) return '';
+  const d = new Date(s);
+  if (isNaN(d)) return '';
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function fmt(n, prefix='') {
   if (n >= 1000000) return prefix + (n/1000000).toFixed(1) + 'M';
@@ -739,21 +797,38 @@ function updateKPIs(data) {
   document.getElementById('kpiWishlistWTD').textContent = fmt(sw.wtd + mw.wtd);
   document.getElementById('kpiWishlistMTD').textContent = fmt(sw.mtd + mw.mtd);
   
-  const lw = wtdMtdLtd(data.lemon, 'orders');
-  const lr = wtdMtdLtd(data.lemon, r => r.rev || r.revenue_cents || 0);
-  const lemonLTD = data.lemon.length ? data.lemon[data.lemon.length-1].cum_orders : 0;
-  const revLTD   = data.lemon.length ? data.lemon[data.lemon.length-1].cum_rev || data.lemon[data.lemon.length-1].cum_revenue_cents : 0;
-  
-  document.getElementById('kpiSalesLTD').textContent = fmt(lemonLTD);
-  document.getElementById('kpiSalesWTD').textContent = fmt(lw.wtd);
-  document.getElementById('kpiSalesMTD').textContent = fmt(lw.mtd);
-  document.getElementById('kpiSalesLTDsub').textContent = fmt(lemonLTD);
+  document.getElementById('kpiWishlistLTDsub').textContent = fmt(totalWL);
+  document.getElementById('kpiWishlistSteam').textContent = 'Steam ' + fmt(steamNet);
+  document.getElementById('kpiWishlistMeta').textContent = 'Meta ' + fmt(metaActive);
 
-  document.getElementById('kpiRevLTD').textContent = '$' + fmt(revLTD/100);
-  document.getElementById('kpiRevWTD').textContent = '$' + fmt(lr.wtd/100);
-  document.getElementById('kpiRevMTD').textContent = '$' + fmt(lr.mtd/100);
-  document.getElementById('kpiRevLTDsub').textContent = '$' + fmt(revLTD/100);
-  
+  const daily = salesDaily(data);
+  const units = wtdMtdLtd(daily, 'units');
+  const rev = wtdMtdLtd(daily, 'rev');
+
+  document.getElementById('kpiSalesLTD').textContent = fmt(units.ltd);
+  document.getElementById('kpiSalesWTD').textContent = fmt(units.wtd);
+  document.getElementById('kpiSalesMTD').textContent = fmt(units.mtd);
+  document.getElementById('kpiSalesLTDsub').textContent = fmt(units.ltd);
+
+  document.getElementById('kpiRevLTD').textContent = '$' + fmt(rev.ltd/100);
+  document.getElementById('kpiRevWTD').textContent = '$' + fmt(rev.wtd/100);
+  document.getElementById('kpiRevMTD').textContent = '$' + fmt(rev.mtd/100);
+  document.getElementById('kpiRevLTDsub').textContent = '$' + fmt(rev.ltd/100);
+
+  // An export without unit counts can't be part of a unit total, so the label says what's left out
+  const noUnits = SALES_SOURCES.filter(src => data[src.key].status === 'ok' && !data[src.key].hasUnits).map(src => src.short);
+  document.getElementById('kpiSalesLabel').textContent = noUnits.length ? `Total Sales (excl. ${noUnits.join(', ')})` : 'Total Sales';
+
+  const founder = wtdMtdLtd(data.lemon, 'orders').ltd;
+  const founderRev = wtdMtdLtd(data.lemon, 'rev').ltd;
+  document.getElementById('kpiSalesFounder').textContent = 'Founder ' + fmt(founder);
+  document.getElementById('kpiRevFounder').textContent = 'Founder $' + fmt(founderRev/100);
+  for (const [key, id, label] of [['steamSales','Steam','Steam'], ['metaSales','Meta','Meta']]) {
+    const hasData = data[key].rows.length > 0;
+    document.getElementById('kpiSales' + id).textContent = label + ' ' + (!hasData ? '—' : data[key].hasUnits ? fmt(wtdMtdLtd(data[key].rows, 'units').ltd) : 'n/a');
+    document.getElementById('kpiRev' + id).textContent = label + ' ' + (hasData ? '$' + fmt(wtdMtdLtd(data[key].rows, 'rev').ltd/100) : '—');
+  }
+
   if (data.discord && data.discord.length) {
     const discLTD = data.discord[data.discord.length-1].cum;
     const dw = wtdMtdLtd(data.discord, 'joins');
@@ -917,11 +992,41 @@ function buildMetaChart(days) {
 // ============================================================
 // CHART: SALES
 // ============================================================
+const EARLY_ACCESS_START = '2026-10-29';
+
+// One row per calendar day across all sales sources, with no gaps between the first and last sale.
+function salesDaily(data) {
+  const blank = date => ({ date, founder: 0, steam: 0, meta: 0, units: 0, rev: 0 });
+  const byDate = {};
+  const add = (date, source, units, rev) => {
+    const row = byDate[date] || (byDate[date] = blank(date));
+    row[source] += rev; row.units += units; row.rev += rev;
+  };
+  data.lemon.forEach(r => add(r.date, 'founder', r.orders || 0, r.rev || 0));
+  data.steamSales.rows.forEach(r => add(r.date, 'steam', r.units, r.rev));
+  data.metaSales.rows.forEach(r => add(r.date, 'meta', r.units, r.rev));
+
+  const dates = Object.keys(byDate).sort();
+  if (!dates.length) return [];
+  const out = [];
+  let cumUnits = 0, cumRev = 0;
+  const cursor = new Date(dates[0] + 'T00:00:00');
+  const last = new Date(dates[dates.length-1] + 'T00:00:00');
+  while (cursor <= last) {
+    const date = `${cursor.getFullYear()}-${String(cursor.getMonth()+1).padStart(2,'0')}-${String(cursor.getDate()).padStart(2,'0')}`;
+    const row = byDate[date] || blank(date);
+    cumUnits += row.units; cumRev += row.rev;
+    out.push({ ...row, cum_units: cumUnits, cum_rev: cumRev });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+  return out;
+}
+
 function buildSalesChart(days) {
-  const slice = filterByRange(activeData.lemon, days);
+  const daily = salesDaily(activeData);
+  const slice = days === 'ea' ? daily.filter(r => r.date >= EARLY_ACCESS_START) : filterByRange(daily, days);
   const startDate = slice.length ? new Date(slice[0].date+'T00:00:00') : null;
-  const anns = makeAnnotations(activeData.events, startDate, days);
-  const revKey = r => (r.rev !== undefined ? r.rev : r.revenue_cents || 0) / 100;
+  const anns = makeAnnotations(activeData.events, startDate, days === 'ea' ? slice.length : days);
 
   if (charts.sales) charts.sales.destroy();
   charts.sales = new Chart(document.getElementById('chartSales'), {
@@ -929,20 +1034,80 @@ function buildSalesChart(days) {
     data: {
       labels: slice.map(r=>r.date),
       datasets: [
-        { label: 'Daily Orders', data: slice.map(r=>r.orders), backgroundColor: 'rgba(0,232,122,.5)', borderColor: '#00e87a', borderWidth: 1, yAxisID: 'y' },
-        { label: 'Cum. Revenue ($)', data: slice.map(r=>(r.cum_rev || r.cum_revenue_cents || 0)/100), type: 'line', borderColor: '#ffd600', borderWidth: 2, pointRadius: 0, fill: false, tension: 0.3, yAxisID: 'y2' },
+        { label: 'Founder Edition', data: slice.map(r=>r.founder/100), backgroundColor: 'rgba(0,232,122,.5)', borderColor: '#00e87a', borderWidth: 1, yAxisID: 'y', stack: 'sales', order: 2 },
+        { label: 'Steam', data: slice.map(r=>r.steam/100), backgroundColor: 'rgba(0,200,255,.5)', borderColor: '#00c8ff', borderWidth: 1, yAxisID: 'y', stack: 'sales', order: 2 },
+        { label: 'Meta Quest', data: slice.map(r=>r.meta/100), backgroundColor: 'rgba(123,92,255,.5)', borderColor: '#7b5cff', borderWidth: 1, yAxisID: 'y', stack: 'sales', order: 2 },
+        { label: 'Cumulative', data: slice.map(r=>r.cum_rev/100), type: 'line', borderColor: '#ffd600', borderWidth: 2, pointRadius: 0, fill: false, tension: 0.3, yAxisID: 'y2', order: 1 },
       ]
     },
     options: {
       ...chartDefaults,
-      plugins: { ...chartDefaults.plugins, annotation: { annotations: anns } },
+      plugins: { ...chartDefaults.plugins,
+        tooltip: { ...chartDefaults.plugins.tooltip, filter: item => item.raw !== 0, callbacks: { label: c => `${c.dataset.label}: $${Math.round(c.raw).toLocaleString()}` } },
+        annotation: { annotations: anns } },
       scales: {
-        x: chartDefaults.scales.x,
-        y: { ...chartDefaults.scales.y, position: 'left', title: { display: true, text: 'Orders/day', color: '#555d75', font: { size: 10 } } },
+        x: { ...chartDefaults.scales.x, stacked: true },
+        y: { ...chartDefaults.scales.y, stacked: true, position: 'left', title: { display: true, text: 'Revenue/day ($)', color: '#555d75', font: { size: 10 } } },
         y2: { ...chartDefaults.scales.y, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Cumulative Revenue ($)', color: '#555d75', font: { size: 10 } } },
       }
     }
   });
+}
+
+// ============================================================
+// SALES BY PLATFORM TABLE
+// ============================================================
+function escapeHtml(v) {
+  return String(v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function buildPlatformTable(data) {
+  const money = cents => '$' + Math.round(cents/100).toLocaleString();
+  const summary = rows => {
+    const rev = wtdMtdLtd(rows, 'rev');
+    return { units: rows.reduce((t, r) => t + (r.units || 0), 0), rev: rev.ltd, wtd: rev.wtd, mtd: rev.mtd,
+      refunds: rows.reduce((t, r) => t + (r.refunds || 0), 0),
+      through: rows.length ? rows.map(r => r.date).sort().pop() : '' };
+  };
+  const line = (name, cls, sum, opts = {}) => `<tr class="${cls}">
+      <td class="pt-name">${name}</td>
+      <td class="num">${opts.noUnits ? '—' : sum.units.toLocaleString()}</td>
+      <td class="num">${opts.noRefunds ? '—' : money(sum.refunds)}</td>
+      <td class="num">${money(sum.rev)}</td>
+      <td class="num">${money(sum.wtd)}</td>
+      <td class="num">${money(sum.mtd)}</td>
+      <td class="pt-status">${opts.status || (sum.through ? fmtDate(sum.through) : '—')}</td>
+    </tr>`;
+  const platformLine = source => {
+    const src = data[source.key];
+    if (src.status === 'ok') return line(source.label, '', summary(src.rows), { noUnits: !src.hasUnits, noRefunds: !src.hasRefunds });
+    const msg = src.status === 'badColumns'
+      ? `${source.tab}: columns not recognized (${escapeHtml(src.missing.join(', '))}). Found: ${escapeHtml(src.headers.join(', '))}`
+      : `No data yet — paste the CSV in the ${source.tab} tab`;
+    return `<tr><td class="pt-name">${source.label}</td><td colspan="6" class="pt-status${src.status === 'badColumns' ? ' err' : ''}">${msg}</td></tr>`;
+  };
+
+  const earlyAccess = [...data.steamSales.rows, ...data.metaSales.rows];
+  const founderRows = data.lemon.map(r => ({ date: r.date, units: r.orders || 0, rev: r.rev || 0 }));
+  document.getElementById('platformBody').innerHTML =
+    SALES_SOURCES.map(platformLine).join('') +
+    (earlyAccess.length ? line('Early Access total', 'pt-sub', summary(earlyAccess), { status: ' ' }) : '') +
+    // Founder sales have ended: filtering empty days makes "Data through" show the last real sale
+    line('Founder Edition (closed)', '', summary(founderRows.filter(r => r.units)), { noRefunds: true }) +
+    line('Total', 'pt-total', summary([...earlyAccess, ...founderRows]), { status: ' ' });
+
+  const notes = SALES_SOURCES.filter(s => data[s.key].status === 'ok').map(s => {
+    const src = data[s.key];
+    const extras = [
+      src.keyActivations ? `${src.keyActivations.toLocaleString()} retail key activations are not counted as sales.` : '',
+      !src.hasUnits ? 'The export has no unit counts, so unit totals leave this platform out.' : '',
+      src.unitsBeforeRefunds ? 'Copies are counted before refunds, because Meta does not report refunded copies.' : '',
+      src.duplicates ? `${src.duplicates} duplicate rows ignored.` : '',
+    ].filter(Boolean);
+    return [`${s.label}: ${s.revenueNote}`, ...extras].join(' ');
+  });
+  document.getElementById('platformNote').textContent =
+    ['Founder Edition: Lemon Squeezy subtotal before taxes and fees.', ...notes].join(' ');
 }
 
 // ============================================================
@@ -1004,12 +1169,135 @@ async function fetchCSV(url) {
   }).data;
 }
 
+// Sales export columns, matched by name so column order doesn't matter.
+const SALES_SOURCES = [
+  { key: 'steamSales', tab: 'Steam_Sales', label: 'Steam', short: 'Steam',
+    revenueNote: 'revenue is "Net Steam Sales", after returns and taxes and before Valve\'s share.',
+    date: ['date'],
+    type: ['type'],
+    netUnits: ['net units sold'],
+    grossUnits: [],
+    netRevenue: ['net steam sales usd'],
+    grossRevenue: [],
+    refundRevenue: ['chargeback returns usd'],
+    product: ['game'] },
+  { key: 'metaSales', tab: 'Meta_Sales', label: 'Meta Quest', short: 'Meta',
+    revenueNote: 'revenue is gross "Revenue (USD)" less "Refunds (USD)", before Meta\'s share.',
+    unitsOptional: true,
+    date: ['date'],
+    type: [],
+    netUnits: ['net units', 'net units sold'],
+    grossUnits: ['units', 'units sold', 'copies sold'],
+    netRevenue: [],
+    grossRevenue: ['revenue usd'],
+    refundRevenue: ['refunds usd'],
+    product: [] },
+];
+
+function parseAmount(v) {
+  const s = String(v == null ? '' : v).trim();
+  const n = parseFloat(s.replace(/[$,\s()]/g, ''));
+  if (isNaN(n)) return 0;
+  return /^\(.*\)$/.test(s) ? -n : n;
+}
+
+// Turns a raw export into one row per day: { date, units, refunds, rev } with money in cents.
+function parseSalesTab(source, rows) {
+  const empty = { status: 'empty', rows: [] };
+  if (!rows || !rows.length) return empty;
+  const headers = Object.keys(rows[0]).filter(h => h.trim());
+  const norm = h => h.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const col = names => { for (const n of names) { const h = headers.find(x => norm(x) === n); if (h) return h; } return null; };
+
+  // Google returns the first tab when a tab name doesn't exist, so a missing tab shows up as wishlist columns.
+  if (headers.some(h => norm(h) === 'datelocal')) return empty;
+
+  const c = {
+    date: col(source.date), type: col(source.type), netUnits: col(source.netUnits), grossUnits: col(source.grossUnits),
+    netRev: col(source.netRevenue), grossRev: col(source.grossRevenue), refundRev: col(source.refundRevenue), product: col(source.product),
+  };
+  const hasUnits = !!(c.netUnits || c.grossUnits);
+  const missing = [];
+  if (!c.date) missing.push('date');
+  if (!hasUnits && !source.unitsOptional) missing.push('units');
+  if (!c.netRev && !c.grossRev) missing.push('revenue');
+  if (missing.length) return { status: 'badColumns', rows: [], missing, headers };
+
+  // The account can hold other products, so keep only the game when its name is present.
+  const isGame = r => /exoshock/i.test(r[c.product] || '') && !/demo/i.test(r[c.product] || '');
+  const onlyGame = c.product && rows.some(isGame);
+
+  const seen = new Set();
+  const byDate = {};
+  let duplicates = 0, keyActivations = 0;
+  for (const r of rows) {
+    const date = normDate(r[c.date]);
+    if (!date || (onlyGame && !isGame(r))) continue;
+    const fingerprint = JSON.stringify(r);
+    if (seen.has(fingerprint)) { duplicates++; continue; }
+    seen.add(fingerprint);
+
+    const units = c.netUnits ? parseAmount(r[c.netUnits]) : c.grossUnits ? parseAmount(r[c.grossUnits]) : 0;
+    // Retail rows are free key activations (Founders, creators), not sales.
+    if (c.type && /retail/i.test(r[c.type])) { keyActivations += units; continue; }
+
+    const refund = c.refundRev ? Math.abs(parseAmount(r[c.refundRev])) : 0;
+    const dollars = c.netRev ? parseAmount(r[c.netRev]) : parseAmount(r[c.grossRev]) - refund;
+    const day = byDate[date] || (byDate[date] = { date, units: 0, refunds: 0, rev: 0 });
+    day.units += units; day.refunds += refund * 100; day.rev += dollars * 100;
+  }
+  const parsed = Object.values(byDate)
+    .map(d => ({ ...d, refunds: Math.round(d.refunds), rev: Math.round(d.rev) }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  if (!parsed.length) return empty;
+  return { status: 'ok', rows: parsed, hasUnits, hasRefunds: !!c.refundRev, keyActivations, duplicates };
+}
+
+// Meta exports copies sold in a separate file, kept in its own tab so its revenue isn't counted twice.
+// Returns { date: copies }, or null when the tab is missing or isn't that file.
+function parseMetaCopies(rows) {
+  if (!rows || !rows.length) return null;
+  const headers = Object.keys(rows[0]);
+  const find = name => headers.find(h => h.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() === name);
+  const dateCol = find('date'), copiesCol = find('copies sold');
+  if (!dateCol || !copiesCol) return null;
+  const copies = {};
+  for (const r of rows) {
+    const date = normDate(r[dateCol]);
+    if (date) copies[date] = (copies[date] || 0) + parseAmount(r[copiesCol]);
+  }
+  return Object.keys(copies).length ? copies : null;
+}
+
+function addMetaCopies(meta, copies) {
+  if (!copies || meta.status !== 'ok' || meta.hasUnits) return meta;
+  const byDate = Object.fromEntries(meta.rows.map(r => [r.date, { ...r }]));
+  for (const [date, units] of Object.entries(copies)) {
+    (byDate[date] || (byDate[date] = { date, units: 0, refunds: 0, rev: 0 })).units = units;
+  }
+  const rows = Object.values(byDate).sort((a, b) => a.date.localeCompare(b.date));
+  return { ...meta, rows, hasUnits: true, unitsBeforeRefunds: true };
+}
+
+// Steam's CSV has a title row and a blank row above the column names. Google can only read the
+// column names when the request starts on their row, so try the following rows until they're found.
+async function fetchSalesTab(source) {
+  let first = null;
+  for (const startRow of [1, 2, 3, 4, 5]) {
+    const range = startRow === 1 ? '' : `&range=A${startRow}:ZZ`;
+    const parsed = parseSalesTab(source, await fetchCSV(sheetsUrl(SHEET_ID, source.tab) + range));
+    if (parsed.status !== 'badColumns') return parsed;
+    first = first || parsed;
+  }
+  return first;
+}
+
 async function loadFromSheets() {
   if (!SHEET_ID) { openModal(); return; }
   const btn = document.getElementById('refreshBtn');
   btn.textContent = '⟳ Loading...'; btn.disabled = true;
   try {
-    const [steam, meta, sales, discord, events, notes, milestones] = await Promise.allSettled([
+    const [steam, meta, sales, discord, events, notes, milestones, steamSales, metaSales, metaCopies] = await Promise.allSettled([
       fetchCSV(sheetsUrl(SHEET_ID, 'Steam')),
       fetchCSV(sheetsUrl(SHEET_ID, 'Meta')),
       fetchCSV(sheetsUrl(SHEET_ID, 'Sales')),
@@ -1017,6 +1305,9 @@ async function loadFromSheets() {
       fetchCSV(sheetsUrl(SHEET_ID, 'Events')),
       fetchCSV(sheetsUrl(SHEET_ID, 'Notes')),
       fetchCSV(sheetsUrl(SHEET_ID, 'Milestones')),
+      fetchSalesTab(SALES_SOURCES[0]),
+      fetchSalesTab(SALES_SOURCES[1]),
+      fetchCSV(sheetsUrl(SHEET_ID, 'Meta_Copies')),
     ]);
 
     let ok = false;
@@ -1027,7 +1318,9 @@ async function loadFromSheets() {
       const parsed = rows.filter(r => r.DateLocal || r.datelocal).map(r => {
         const adds = parseInt(r.Adds || r.adds || 0);
         const dels = parseInt(r.Deletes || r.deletes || 0);
-        cum += adds - dels;
+        // After launch, wishlisted buyers leave the wishlist, so purchases and gifts reduce the count too
+        const bought = parseInt(r.PurchasesAndActivations || 0) + parseInt(r.Gifts || 0);
+        cum += adds - dels - bought;
         return { date: normDate(r.DateLocal||r.datelocal), adds, deletes: dels, net_cum: cum };
       }).filter(r => r.date);
       if (parsed.length) { activeData.steam = parsed; ok = true; }
@@ -1060,6 +1353,11 @@ async function loadFromSheets() {
       }).filter(r=>r.date);
       if (parsed.length) { activeData.lemon = parsed; ok = true; }
     }
+
+    const noSales = { status: 'empty', rows: [] };
+    activeData.steamSales = steamSales.status === 'fulfilled' ? steamSales.value : noSales;
+    activeData.metaSales  = addMetaCopies(metaSales.status === 'fulfilled' ? metaSales.value : noSales,
+      metaCopies.status === 'fulfilled' ? parseMetaCopies(metaCopies.value) : null);
 
     if (discord.status === 'fulfilled' && discord.value.length) {
       // Find the date key dynamically in case the header has extra text/spaces
@@ -1114,6 +1412,9 @@ async function loadFromSheets() {
       const sb = document.getElementById('statusBar');
       sb.className = 'status-bar live';
       document.getElementById('statusText').textContent = 'Live — connected to Google Sheets. Last refresh: ' + new Date().toLocaleTimeString();
+      const latest = [activeData.steam, activeData.meta, activeData.steamSales.rows, activeData.metaSales.rows]
+        .map(a => a.length ? a[a.length-1].date : '').sort().pop();
+      if (latest) document.getElementById('lastUpdated').textContent = 'Data: ' + new Date(latest + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'2-digit', year:'numeric' });
       renderAll();
     }
   } catch(e) {
@@ -1131,6 +1432,7 @@ function renderAll() {
   buildSteamChart(ranges.steam);
   buildMetaChart(ranges.meta);
   buildSalesChart(ranges.sales);
+  buildPlatformTable(activeData);
   buildEventsTable(activeData.events);
   try { buildTimeline(); } catch(e) { console.warn('Timeline error:', e); }
   updateAlert();
